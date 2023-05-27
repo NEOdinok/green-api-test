@@ -1,5 +1,6 @@
 import './globals.css'
 import { Inter } from 'next/font/google'
+import cn from 'classnames';
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -15,7 +16,14 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body
+        className={cn(
+          inter.className,
+          "flex flex-col items-center justify-center w-screen min-h-screen min-w-screen p-5 bg-gray-50 text-gray-800 dark:bg-gray-900 overflow-hidden",
+        )}
+        >
+        {children}
+      </body>
     </html>
   )
 }
