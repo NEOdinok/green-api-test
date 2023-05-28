@@ -31,9 +31,10 @@ const Messenger: NextPage = () => {
 		const timer = setIntervalAsync(async () => {
 			const id = await checkForNotification();
 			if (id) await deleteNotification(id);
-			// if (id) console.log('delete func...', id);
-			else console.log('no notification to delete, waiting...');
-		}, 1000);
+			else {
+				console.log('[useEffect] wait...')
+			}
+		}, 4000);
 
 		return () => {
 			clearIntervalAsync(timer);
@@ -43,15 +44,14 @@ const Messenger: NextPage = () => {
 
 	const deleteNotification = async (id: number) => {
 		try {
-			console.log('deleting notification', id);
-
+			console.log('[delete] deleting:', id);
 			let config = {
 				method: 'delete',
 				maxBodyLength: Infinity,
 				url: `https://
 					api.green-api.com
-					/waInstance1101825242
-					/deleteNotification/1fd3d7b64a6e45218602fa793c6a477ef8f6d034304c4627ab
+					/waInstance${store.idInstance}
+					/deleteNotification/${store.apiTokenInstance}
 					/${id}`,
 				headers: {
 					'Access-Control-Allow-Origin': '*',
@@ -60,21 +60,15 @@ const Messenger: NextPage = () => {
 			};
 			
 			const res = await axios.request(config);
-
-			if (res.data.result) {
-				console.log('responce from delete:', res.data.result);
-			} else {
-				console.log('error')
-			}
 		} catch (error) {
 			console.warn({ error });
 		}
 	}
 
-	// 79037457337
+
 	const checkForNotification = async () => {
 		try {
-			console.log('checking...');
+			console.log('[check] checking...');
 
 			let config = {
 				method: 'get',
@@ -82,7 +76,7 @@ const Messenger: NextPage = () => {
 				url: `https://
 					${process.env.NEXT_PUBLIC_API_URL}
 					/waInstance${store.idInstance}
-					/receiveNotification/1fd3d7b64a6e45218602fa793c6a477ef8f6d034304c4627ab`,
+					/receiveNotification/${store.apiTokenInstance}`,
 				headers: {
 					'Access-Control-Allow-Origin': '*',
 					'Access-Control-Allow-Methods': 'GET, PUT, POST, DELETE, OPTIONS',
@@ -90,39 +84,28 @@ const Messenger: NextPage = () => {
 			};
 
 			const res = await axios.request(config)
-			console.log('res:', res.data);
 
-			if (res.data.body.messageData) {
-				console.log('found text message with text:', res.data.body.messageData.textMessageData.textMessage);
+			if (!res.data) {
+				console.log('[check] no notifications'); 
+				return null
+			}
+			else if (res.data.body.typeWebhook && res.data.body.typeWebhook === "incomingMessageReceived") {
+				console.log('[check] found message to render!');
+
 				store.pushMessage({
 					text: res.data.body.messageData.textMessageData.textMessage as string, 
 					isSent: false, 
 					key: `${res.data.body.idMessage}`,
 					timeSent: timestampToDate(res.data.body.timestamp),
 				});
-				// setChatMessages((prev) => [
-				// 	...prev, 
-				// 	{
-				// 		text: res.data.body.messageData.textMessageData.textMessage as string, 
-				// 		isSent: false, 
-				// 		key: `${res.data.body.idMessage}`,
-				// 		timeSent: timestampToDate(res.data.body.timestamp),
-				// 	}
-				// ]);
+				return res.data.receiptId;
+			}
+			else {
+				console.log('[check] got message, but not go render')
+				return res.data.receiptId;
+			}
 
-			} else console.log('not a normal text message');
 
-			// setChatMessages((prev) => [
-			// 	...prev, 
-			// 	{
-			// 		text: res.data.body.messageData.textMessageData.textMessage as string, 
-			// 		isSent: false, 
-			// 		key: `${res.data.body.idMessage}`,
-			// 		timeSent: timestampToDate(res.data.body.timestamp),
-			// 	}
-			// ])
-
-			return res.data.receiptId;
 		} catch (error) {
 			console.warn({ error })
 		}
@@ -143,9 +126,9 @@ const Messenger: NextPage = () => {
 				mode: 'no-cors',
 				maxBodyLength: Infinity,
 				url: `https://
-					api.green-api.com
-					/waInstance1101825242
-					/sendMessage/1fd3d7b64a6e45218602fa793c6a477ef8f6d034304c4627ab`,
+					${process.env.NEXT_PUBLIC_API_URL}
+					/waInstance${store.idInstance}
+					/sendMessage/${store.apiTokenInstance}`,
 				headers: { 
 					'Content-Type': 'application/json',
 					'Access-Control-Allow-Origin': '*',
@@ -156,17 +139,12 @@ const Messenger: NextPage = () => {
 
 			const res = await axios.request(config);
 
-			if (res.status == 200) {
-				store.pushMessage({
-					text: message as string, 
-					isSent: true, 
-					key: `${res.data.idMessage}`,
-					timeSent: getCurrentTime(),
-				});
-
-			} else {
-				console.log('error');
-			}
+			store.pushMessage({
+				text: message as string, 
+				isSent: true, 
+				key: `${res.data.idMessage}`,
+				timeSent: getCurrentTime(),
+			});
 
 			setMessage('');
 		} catch (error) {
