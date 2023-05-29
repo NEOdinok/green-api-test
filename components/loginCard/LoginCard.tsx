@@ -21,7 +21,7 @@ const LoginCard: React.FC = () => {
 
 			const res = await axios.post(`/api/login`, {
 				test: 'test string',
-				apiUrl: process.env.NEXT_PUBLIC_API_URL,
+				apiUrl: 'api.green-api.com',
 				id: id,
 				apiToken: apiToken,
 			});

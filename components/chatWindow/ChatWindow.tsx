@@ -72,7 +72,7 @@ const ChatWindow = () => {
 			let config = {
 				method: 'DELETE',
 				maxBodyLength: Infinity,
-				url: `https://api.green-api.com/waInstance1101825531/deleteNotification/f3e7db6cbbfd4d1da50fa4764f1c96fc64c94432bc4f41debd/${id}`,
+				url: `https://api.green-api.com/waInstance${store.idInstance}/deleteNotification/${store.apiTokenInstance}/${id}`,
 			};
 			const response = await axios.request(config);
 			console.log('[delete]', response);
@@ -104,7 +104,7 @@ const ChatWindow = () => {
 				mode: 'no-cors',
 				maxBodyLength: Infinity,
 				url: `https://
-					${process.env.NEXT_PUBLIC_API_URL}
+					api.green-api.com
 					/waInstance${store.idInstance}
 					/sendMessage/${store.apiTokenInstance}`,
 				data: data,

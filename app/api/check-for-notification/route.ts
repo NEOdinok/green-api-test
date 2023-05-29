@@ -8,7 +8,8 @@ export async function POST (req: Request) {
 		let config = {
 			method: 'GET',
 			maxBodyLength: Infinity,
-			url: 'https://api.green-api.com/waInstance1101825531/receiveNotification/f3e7db6cbbfd4d1da50fa4764f1c96fc64c94432bc4f41debd',
+			// url: 'https://api.green-api.com/waInstance1101825531/receiveNotification/f3e7db6cbbfd4d1da50fa4764f1c96fc64c94432bc4f41debd',
+			url: `https://${params.apiUrl}/waInstance${params.id}/receiveNotification/${params.apiToken}`,
 		};
 
     const response = await axios.request(config);
