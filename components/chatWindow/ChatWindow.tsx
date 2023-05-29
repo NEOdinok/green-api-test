@@ -76,14 +76,6 @@ const ChatWindow = () => {
 			};
 			const response = await axios.request(config);
 			console.log('[delete]', response);
-
-			// const res = await axios.post(`/api/delete-notification`, {
-			// 	notificationId: id,
-			// 	apiUrl: 'api.green-api.com',
-			// 	id: store.idInstance,
-			// 	apiToken: store.apiTokenInstance,
-			// });
-			// console.log('[messenger delete]', res);
 		} catch (error) {
 			console.warn({ error });
 		}

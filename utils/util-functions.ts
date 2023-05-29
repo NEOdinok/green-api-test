@@ -9,7 +9,6 @@ const getCurrentTime = (): string => {
 const timestampToDate = (timestamp: number) => {
 	const milliseconds = timestamp * 1000;
 	const dateObject = new Date(milliseconds)
-	// console.log(dateObject)
 	return `${dateObject.getHours()}` + `:` + `${dateObject.getMinutes()}`;
 }
 
