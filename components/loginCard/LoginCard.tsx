@@ -6,6 +6,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { observer } from "mobx-react-lite";
 import store from "@/stores/store";
+import type { NextApiRequest, NextApiResponse } from "next";
+import { ResSuccess, ResErrorWithDetails } from "@/types";
 
 const LoginCard: React.FC = () => {
 	const [id, setId] = useState('');
@@ -17,20 +19,14 @@ const LoginCard: React.FC = () => {
 			e.preventDefault();
 			e.stopPropagation();
 
-			const config = {
-				method: 'GET',
-				mode: 'no-cors',
-				headers: {
-					'Access-Control-Allow-Origin': '*',
-					'Access-Control-Allow-Methods': 'GET, PUT, POST, DELETE, OPTIONS',
-				}
-			};
+			const res = await axios.post(`/api/login`, {
+				test: 'test string',
+				apiUrl: process.env.NEXT_PUBLIC_API_URL,
+				id: id,
+				apiToken: apiToken,
+			});
 
-			const res = await axios.get(`https://
-				${process.env.NEXT_PUBLIC_API_URL}
-				/waInstance${id}
-				/getSettings/${apiToken}`
-			, config);
+			console.log('login:', res.data);
 
 			if (res.status == 200) {
 				console.log('succes!');
@@ -40,11 +36,11 @@ const LoginCard: React.FC = () => {
 			} else {
 				console.log('error');
 			}
+
 		} catch (error) {
 			console.warn({ error });
 		}
 	}
-
 	return (
 		<section className={"bg-gray-50 dark:bg-gray-900"}>
 			<div className={"flex flex-col items-center justify-center mx-auto md:h-screen"}>

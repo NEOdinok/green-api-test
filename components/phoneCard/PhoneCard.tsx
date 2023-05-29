@@ -1,14 +1,19 @@
-"use client"
+'use client'
 import Image from "next/image";
 import logo from "../../public/green-api-logo.png";
-import axios from "axios";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { observer } from "mobx-react-lite";
 import store from "@/stores/store";
+import { useEffect } from "react";
 
 const PhoneCard = () => {
 	const router = useRouter();
+
+	useEffect(() => {
+		if (!store.apiTokenInstance || !store.apiTokenInstance) router.replace('/');
+	}, []);
+
 	const [number, setNumber] = useState('');
 
 	const handleProceed = async (e: React.MouseEvent) => {
