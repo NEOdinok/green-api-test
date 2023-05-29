@@ -21,7 +21,7 @@ const ChatWindow = () => {
 		const polling = setIntervalAsync(async () => {
 			const id = await checkForNotification();
 			if (id) await deleteNotification(id);
-			else console.log('[useEffect] wait...');
+			else console.log('no notifications, waiting...');
 		}, 1500);
 
 		return () => {
@@ -37,10 +37,8 @@ const ChatWindow = () => {
 				apiToken: store.apiTokenInstance,
 			});
 			
-			console.log('[messenger check]', res);
 
 			if (!res.data) {
-				console.log('[check] no notifications'); 
 				return null;
 			}
 			else if (
@@ -48,7 +46,6 @@ const ChatWindow = () => {
 				&& res.data.body.typeWebhook === "incomingMessageReceived"
 				&& res.data.body.senderData.sender === `${store.recieverNumber}@c.us`
 			) {
-				console.log('[check] found message to render!');
 
 				store.pushMessage({
 					text: res.data.body.messageData.textMessageData.textMessage as string, 
@@ -59,7 +56,6 @@ const ChatWindow = () => {
 				return res.data.receiptId;
 			}
 			else {
-				console.log('[check] got message, but not go render')
 				return res.data.receiptId;
 			}
 		} catch (error) {
@@ -75,7 +71,6 @@ const ChatWindow = () => {
 				url: `https://api.green-api.com/waInstance${store.idInstance}/deleteNotification/${store.apiTokenInstance}/${id}`,
 			};
 			const response = await axios.request(config);
-			console.log('[delete]', response);
 		} catch (error) {
 			console.warn({ error });
 		}

@@ -26,8 +26,6 @@ const LoginCard: React.FC = () => {
 				apiToken: apiToken,
 			});
 
-			console.log('login:', res.data);
-
 			if (res.status == 200) {
 				console.log('succes!');
 				store.idInstance = id;
